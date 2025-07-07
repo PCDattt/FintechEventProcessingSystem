@@ -1,0 +1,12 @@
+version: "1"
+packages:
+  - name: "db"                      # package name for generated Go code
+    path: "internal/db"      # Go package import path for generated code
+    engine: "postgresql"
+    schema:
+      - "db/migration/"
+    queries: "db/query/"
+    emit_json_tags: true             # generate json tags for struct fields
+    emit_prepared_queries: false    # optional, true if you want prepared queries
+    emit_interface: false            # optional, interface for queries (default false)
+    sql_package: "pgx/v5"
