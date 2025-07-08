@@ -18,19 +18,19 @@ func NewAccountHandler(svc service.AccountService) *AccountHandler {
 
 func (h *AccountHandler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 	var req request.CreateAccountRequest
-	
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "invalid request", http.StatusBadRequest)
 		return
 	}
 	
-	var account = mapper.CreateAccountRequestToModel(req)
+	account := mapper.CreateAccountRequestToModel(req)
 	account, err := h.svc.CreateAccount(r.Context(), account)
-
 	if err != nil {
 		http.Error(w, "could not create account", http.StatusInternalServerError)
 		return
 	}
 
-	json.NewEncoder(w).Encode(account)
+	res := mapper.ModelAccountToCreateResponse(account)
+
+	json.NewEncoder(w).Encode(res)
 }
