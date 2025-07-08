@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/PCDattt/FintechEventProcessingSystem/shared/config"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/db"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/handler"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/router"
@@ -13,13 +14,13 @@ import (
 )
 
 func main() {
-	dbURL := "postgres://postgres:postgres@localhost:5432/gofinance?sslmode=disable"
+	cfg := config.LoadConfig()
 	
-	pool, err := pgxpool.New(context.Background(), dbURL)
+	pool, err := pgxpool.New(context.Background(), cfg.DBURL)
 	if err != nil {
 		log.Fatal("cannot parse DB config:", err)
 	}
-	
+
 	err = pool.Ping(context.Background())
 	if err != nil {
 		log.Fatal("cannot connect to DB:", err)
