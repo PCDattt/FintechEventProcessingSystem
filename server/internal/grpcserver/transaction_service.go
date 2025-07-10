@@ -17,7 +17,7 @@ func NewTransactionServiceServer() *TransactionServiceServer {
 
 func (s *TransactionServiceServer) Deposit(ctx context.Context, req *proto.DepositRequest) (*proto.DepositResponse, error) {
 	log.Printf("Received Deposit: %+v\n", req)
-	return &proto.DepositResponse{Status: proto.TransactionStatus_TRANSACTION_STATUS_PENDING},nil
+	return &proto.DepositResponse{Status: proto.TransactionStatus_TRANSACTION_STATUS_PENDING}, nil
 }
 
 func (s *TransactionServiceServer) Withdraw(ctx context.Context, req *proto.WithdrawRequest) (*proto.WithdrawResponse, error) {

@@ -1,7 +1,7 @@
 DB_URL=postgres://postgres:postgres@localhost:5432/gofinance?sslmode=disable
 MIGRATE_PATH=server/db/migration
 
-.PHONY: migrate-up migrate-down migrate-create migrate-status run-server
+.PHONY: migrate-up migrate-down migrate-create migrate-status run-server run-client
 
 migrate-up:
 	migrate -path $(MIGRATE_PATH) -database "$(DB_URL)" up
@@ -21,3 +21,6 @@ migrate-status:
 
 run-server:
 	go run ./server/cmd/main.go
+
+run-client:
+	go run ./client/cmd/main.go
