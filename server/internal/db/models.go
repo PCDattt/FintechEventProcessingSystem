@@ -5,24 +5,24 @@
 package db
 
 import (
-	"github.com/jackc/pgx/v5/pgtype"
+	"time"
 )
 
 type Account struct {
-	ID          int32            `json:"id"`
-	Username    string           `json:"username"`
-	Password    string           `json:"password"`
-	Amount      int32            `json:"amount"`
-	CreatedDate pgtype.Timestamp `json:"created_date"`
+	ID          int32     `json:"id"`
+	Username    string    `json:"username"`
+	Password    string    `json:"password"`
+	Amount      int32     `json:"amount"`
+	CreatedDate time.Time `json:"created_date"`
 }
 
 type Transaction struct {
-	ID            int32            `json:"id"`
-	Type          int32            `json:"type"`
-	Status        int32            `json:"status"`
-	Amount        int32            `json:"amount"`
-	Message       pgtype.Text      `json:"message"`
-	FromAccountID pgtype.Int4      `json:"from_account_id"`
-	ToAccountID   pgtype.Int4      `json:"to_account_id"`
-	CreatedDate   pgtype.Timestamp `json:"created_date"`
+	ID            int32     `json:"id"`
+	Type          int32     `json:"type"`
+	Status        int32     `json:"status"`
+	Amount        int32     `json:"amount"`
+	Message       string    `json:"message"`
+	FromAccountID int32     `json:"from_account_id"`
+	ToAccountID   int32     `json:"to_account_id"`
+	CreatedDate   time.Time `json:"created_date"`
 }

@@ -13,7 +13,7 @@ func DBAccountToModel(a db.Account) model.Account {
 		Username: a.Username,
 		Password: a.Password,
 		Amount: int(a.Amount),
-		CreatedDate: a.CreatedDate.Time,
+		CreatedDate: a.CreatedDate,
 	}
 }
 

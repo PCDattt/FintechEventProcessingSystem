@@ -10,3 +10,22 @@ packages:
     emit_prepared_queries: false    # optional, true if you want prepared queries
     emit_interface: false            # optional, interface for queries (default false)
     sql_package: "pgx/v5"
+    overrides:
+      - db_type: "text"
+        nullable: true
+        go_type:
+          type: "string"
+      - db_type: "int32"
+        go_type:
+          type: "int"
+      - db_type: "pg_catalog.timestamp"
+        go_type:
+          type: "time.Time"
+        nullable: true
+      - db_type: "pg_catalog.timestamp"
+        go_type:
+          type: "time.Time"
+      - db_type: "pg_catalog.int4"
+        nullable: true
+        go_type:
+          type:  "int32"
