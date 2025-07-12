@@ -12,7 +12,7 @@ import (
 const createTransaction = `-- name: CreateTransaction :one
 INSERT INTO transactions (type, status, amount, message, from_account_id, to_account_id)
 VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING id, status, message
+RETURNING id, type, status, amount, message, from_account_id, to_account_id, created_date
 `
 
 type CreateTransactionParams struct {
@@ -24,13 +24,7 @@ type CreateTransactionParams struct {
 	ToAccountID   *int   `json:"to_account_id"`
 }
 
-type CreateTransactionRow struct {
-	ID      int32  `json:"id"`
-	Status  int32  `json:"status"`
-	Message string `json:"message"`
-}
-
-func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionParams) (CreateTransactionRow, error) {
+func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionParams) (Transaction, error) {
 	row := q.db.QueryRow(ctx, createTransaction,
 		arg.Type,
 		arg.Status,
@@ -39,7 +33,16 @@ func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionPa
 		arg.FromAccountID,
 		arg.ToAccountID,
 	)
-	var i CreateTransactionRow
-	err := row.Scan(&i.ID, &i.Status, &i.Message)
+	var i Transaction
+	err := row.Scan(
+		&i.ID,
+		&i.Type,
+		&i.Status,
+		&i.Amount,
+		&i.Message,
+		&i.FromAccountID,
+		&i.ToAccountID,
+		&i.CreatedDate,
+	)
 	return i, err
 }

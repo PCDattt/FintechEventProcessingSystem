@@ -56,10 +56,15 @@ func TransactionModelToCreateParams(tx model.Transaction) db.CreateTransactionPa
 	}
 }
 
-func DBTransactionToModel(tx db.CreateTransactionRow) model.Transaction {
+func DBTransactionToModel(tx db.Transaction) model.Transaction {
 	return model.Transaction{
 		Id: int(tx.ID),
+		Type: enum.TransactionType(tx.Type),
 		Status: enum.TransactionStatus(tx.Status),
+		Amount: int(tx.Amount),
 		Message: tx.Message,
+		FromAccountId: tx.FromAccountID,
+		ToAccountId: tx.ToAccountID,
+		CreatedDate: tx.CreatedDate,
 	}
 }

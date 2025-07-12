@@ -5,20 +5,22 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"google.golang.org/grpc"
-	"syscall"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 
-	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/PCDattt/FintechEventProcessingSystem/shared/config"
-	"github.com/PCDattt/FintechEventProcessingSystem/shared/proto"
+	"google.golang.org/grpc"
+
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/db"
+	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/grpcserver"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/handler"
+	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/publisher"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/router"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/service"
-	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/grpcserver"
+	"github.com/PCDattt/FintechEventProcessingSystem/shared/config"
+	"github.com/PCDattt/FintechEventProcessingSystem/shared/proto"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func main() {
@@ -59,7 +61,12 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer()
-	proto.RegisterTransactionServiceServer(grpcServer, grpcserver.NewTransactionServiceServer(queries))
+	publisher, err := publisher.NewPublisher(cfg.RabbitURL)
+	if err != nil {
+		log.Fatal("failed to connect to RabbitMQ:", err)
+	}
+	defer publisher.Close()
+	proto.RegisterTransactionServiceServer(grpcServer, grpcserver.NewTransactionServiceServer(queries, publisher))
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
