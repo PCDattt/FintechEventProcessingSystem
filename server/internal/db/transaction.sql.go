@@ -10,18 +10,18 @@ import (
 )
 
 const createTransaction = `-- name: CreateTransaction :one
-INSERT INTO transactions (type, status, amount, message, from_account_id, to_account_id)
+INSERT INTO transactions (type, status, amount, message, account_id, to_account_id)
 VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING id, type, status, amount, message, from_account_id, to_account_id, created_date
+RETURNING id, type, status, amount, message, account_id, to_account_id, created_date
 `
 
 type CreateTransactionParams struct {
-	Type          int32  `json:"type"`
-	Status        int32  `json:"status"`
-	Amount        int32  `json:"amount"`
-	Message       string `json:"message"`
-	FromAccountID *int   `json:"from_account_id"`
-	ToAccountID   *int   `json:"to_account_id"`
+	Type        int32  `json:"type"`
+	Status      int32  `json:"status"`
+	Amount      int32  `json:"amount"`
+	Message     string `json:"message"`
+	AccountID   int32  `json:"account_id"`
+	ToAccountID *int   `json:"to_account_id"`
 }
 
 func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionParams) (Transaction, error) {
@@ -30,7 +30,7 @@ func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionPa
 		arg.Status,
 		arg.Amount,
 		arg.Message,
-		arg.FromAccountID,
+		arg.AccountID,
 		arg.ToAccountID,
 	)
 	var i Transaction
@@ -40,7 +40,7 @@ func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionPa
 		&i.Status,
 		&i.Amount,
 		&i.Message,
-		&i.FromAccountID,
+		&i.AccountID,
 		&i.ToAccountID,
 		&i.CreatedDate,
 	)

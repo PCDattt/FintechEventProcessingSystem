@@ -9,6 +9,7 @@ import (
 	"github.com/PCDattt/FintechEventProcessingSystem/shared/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 func main() {
@@ -23,37 +24,40 @@ func main() {
 
 	ctx := context.Background()
 
-	depositReq := proto.DepositRequest {
-		ToAccountId: 1,
+	depositReq := proto.TransactionRequest {
+		AccountId: 1,
+		Type: proto.TransactionType_TRANSACTION_TYPE_DEPOSIT,
 		Amount: 1000,
 	}
 
-	withdrawReq := proto.WithdrawRequest {
-		FromAccountId: 1,
+	withdrawReq := proto.TransactionRequest {
+		AccountId: 1,
+		Type: proto.TransactionType_TRANSACTION_TYPE_WITHDRAW,
 		Amount: 500,
 	}
 
-	paymentReq := proto.PaymentRequest {
-		FromAccountId: 1,
-		ToAccountId: 5,
+	paymentReq := proto.TransactionRequest {
+		AccountId: 1,
+		Type: proto.TransactionType_TRANSACTION_TYPE_PAYMENT,
+		ToAccountId: wrapperspb.Int32(5),
 		Amount: 500,
 	}
 
-	depositRes, err := txService.Deposit(ctx, &depositReq)
+	depositRes, err := txService.SendTransaction(ctx, &depositReq)
 	if err != nil {
 		log.Fatalf("Deposit failed: %v\n", err)
 	} else {
 		fmt.Printf("Deposit status: %v\n", depositRes.Status)
 	}
 
-	withdrawRes, err := txService.Withdraw(ctx, &withdrawReq)
+	withdrawRes, err := txService.SendTransaction(ctx, &withdrawReq)
 	if err != nil {
 		log.Fatalf("Withdraw failed: %v\n", err)
 	} else {
 		fmt.Printf("Withdraw status: %v\n", withdrawRes.Status)
 	}
 
-	paymentRes, err := txService.Payment(ctx, &paymentReq)
+	paymentRes, err := txService.SendTransaction(ctx, &paymentReq)
 	if err != nil {
 		log.Fatalf("Payment failed: %v\n", err)
 	} else {

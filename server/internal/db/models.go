@@ -17,12 +17,12 @@ type Account struct {
 }
 
 type Transaction struct {
-	ID            int32     `json:"id"`
-	Type          int32     `json:"type"`
-	Status        int32     `json:"status"`
-	Amount        int32     `json:"amount"`
-	Message       string    `json:"message"`
-	FromAccountID *int      `json:"from_account_id"`
-	ToAccountID   *int      `json:"to_account_id"`
-	CreatedDate   time.Time `json:"created_date"`
+	ID          int32     `json:"id"`
+	Type        int32     `json:"type"`
+	Status      int32     `json:"status"`
+	Amount      int32     `json:"amount"`
+	Message     string    `json:"message"`
+	AccountID   int32     `json:"account_id"`
+	ToAccountID *int      `json:"to_account_id"`
+	CreatedDate time.Time `json:"created_date"`
 }

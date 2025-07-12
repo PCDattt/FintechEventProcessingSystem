@@ -9,6 +9,7 @@ package proto
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -24,25 +25,25 @@ const (
 type TransactionStatus int32
 
 const (
-	TransactionStatus_TRANSACTION_STATUS_UNKNOWN TransactionStatus = 0
-	TransactionStatus_TRANSACTION_STATUS_PENDING TransactionStatus = 1
-	TransactionStatus_TRANSACTION_STATUS_SUCCESS TransactionStatus = 2
-	TransactionStatus_TRANSACTION_STATUS_FAILED  TransactionStatus = 3
+	TransactionStatus_TRANSACTION_STATUS_UNKNOWN    TransactionStatus = 0
+	TransactionStatus_TRANSACTION_STATUS_PROCESSING TransactionStatus = 1
+	TransactionStatus_TRANSACTION_STATUS_SUCCESS    TransactionStatus = 2
+	TransactionStatus_TRANSACTION_STATUS_FAILED     TransactionStatus = 3
 )
 
 // Enum value maps for TransactionStatus.
 var (
 	TransactionStatus_name = map[int32]string{
 		0: "TRANSACTION_STATUS_UNKNOWN",
-		1: "TRANSACTION_STATUS_PENDING",
+		1: "TRANSACTION_STATUS_PROCESSING",
 		2: "TRANSACTION_STATUS_SUCCESS",
 		3: "TRANSACTION_STATUS_FAILED",
 	}
 	TransactionStatus_value = map[string]int32{
-		"TRANSACTION_STATUS_UNKNOWN": 0,
-		"TRANSACTION_STATUS_PENDING": 1,
-		"TRANSACTION_STATUS_SUCCESS": 2,
-		"TRANSACTION_STATUS_FAILED":  3,
+		"TRANSACTION_STATUS_UNKNOWN":    0,
+		"TRANSACTION_STATUS_PROCESSING": 1,
+		"TRANSACTION_STATUS_SUCCESS":    2,
+		"TRANSACTION_STATUS_FAILED":     3,
 	}
 )
 
@@ -73,134 +74,83 @@ func (TransactionStatus) EnumDescriptor() ([]byte, []int) {
 	return file_shared_proto_transaction_proto_rawDescGZIP(), []int{0}
 }
 
-type DepositRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ToAccountId   int32                  `protobuf:"varint,1,opt,name=to_account_id,json=toAccountId,proto3" json:"to_account_id,omitempty"`
-	Amount        int32                  `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
+type TransactionType int32
 
-func (x *DepositRequest) Reset() {
-	*x = DepositRequest{}
-	mi := &file_shared_proto_transaction_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
+const (
+	TransactionType_TRANSACTION_TYPE_UNSPECIFIED TransactionType = 0
+	TransactionType_TRANSACTION_TYPE_DEPOSIT     TransactionType = 1
+	TransactionType_TRANSACTION_TYPE_WITHDRAW    TransactionType = 2
+	TransactionType_TRANSACTION_TYPE_PAYMENT     TransactionType = 3
+)
 
-func (x *DepositRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DepositRequest) ProtoMessage() {}
-
-func (x *DepositRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_shared_proto_transaction_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
+// Enum value maps for TransactionType.
+var (
+	TransactionType_name = map[int32]string{
+		0: "TRANSACTION_TYPE_UNSPECIFIED",
+		1: "TRANSACTION_TYPE_DEPOSIT",
+		2: "TRANSACTION_TYPE_WITHDRAW",
+		3: "TRANSACTION_TYPE_PAYMENT",
 	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DepositRequest.ProtoReflect.Descriptor instead.
-func (*DepositRequest) Descriptor() ([]byte, []int) {
-	return file_shared_proto_transaction_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *DepositRequest) GetToAccountId() int32 {
-	if x != nil {
-		return x.ToAccountId
+	TransactionType_value = map[string]int32{
+		"TRANSACTION_TYPE_UNSPECIFIED": 0,
+		"TRANSACTION_TYPE_DEPOSIT":     1,
+		"TRANSACTION_TYPE_WITHDRAW":    2,
+		"TRANSACTION_TYPE_PAYMENT":     3,
 	}
-	return 0
+)
+
+func (x TransactionType) Enum() *TransactionType {
+	p := new(TransactionType)
+	*p = x
+	return p
 }
 
-func (x *DepositRequest) GetAmount() int32 {
-	if x != nil {
-		return x.Amount
-	}
-	return 0
+func (x TransactionType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-type WithdrawRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	FromAccountId int32                  `protobuf:"varint,1,opt,name=from_account_id,json=fromAccountId,proto3" json:"from_account_id,omitempty"`
-	Amount        int32                  `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+func (TransactionType) Descriptor() protoreflect.EnumDescriptor {
+	return file_shared_proto_transaction_proto_enumTypes[1].Descriptor()
 }
 
-func (x *WithdrawRequest) Reset() {
-	*x = WithdrawRequest{}
-	mi := &file_shared_proto_transaction_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
+func (TransactionType) Type() protoreflect.EnumType {
+	return &file_shared_proto_transaction_proto_enumTypes[1]
 }
 
-func (x *WithdrawRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
+func (x TransactionType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
 }
 
-func (*WithdrawRequest) ProtoMessage() {}
-
-func (x *WithdrawRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_shared_proto_transaction_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use WithdrawRequest.ProtoReflect.Descriptor instead.
-func (*WithdrawRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use TransactionType.Descriptor instead.
+func (TransactionType) EnumDescriptor() ([]byte, []int) {
 	return file_shared_proto_transaction_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *WithdrawRequest) GetFromAccountId() int32 {
-	if x != nil {
-		return x.FromAccountId
-	}
-	return 0
-}
-
-func (x *WithdrawRequest) GetAmount() int32 {
-	if x != nil {
-		return x.Amount
-	}
-	return 0
-}
-
-type PaymentRequest struct {
+type TransactionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	FromAccountId int32                  `protobuf:"varint,1,opt,name=from_account_id,json=fromAccountId,proto3" json:"from_account_id,omitempty"`
-	ToAccountId   int32                  `protobuf:"varint,2,opt,name=to_account_id,json=toAccountId,proto3" json:"to_account_id,omitempty"`
-	Amount        int32                  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`
+	AccountId     int32                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	Amount        int32                  `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"`
+	Type          TransactionType        `protobuf:"varint,3,opt,name=type,proto3,enum=proto.TransactionType" json:"type,omitempty"`
+	ToAccountId   *wrapperspb.Int32Value `protobuf:"bytes,4,opt,name=to_account_id,json=toAccountId,proto3" json:"to_account_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *PaymentRequest) Reset() {
-	*x = PaymentRequest{}
-	mi := &file_shared_proto_transaction_proto_msgTypes[2]
+func (x *TransactionRequest) Reset() {
+	*x = TransactionRequest{}
+	mi := &file_shared_proto_transaction_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PaymentRequest) String() string {
+func (x *TransactionRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PaymentRequest) ProtoMessage() {}
+func (*TransactionRequest) ProtoMessage() {}
 
-func (x *PaymentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_shared_proto_transaction_proto_msgTypes[2]
+func (x *TransactionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_shared_proto_transaction_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -211,54 +161,62 @@ func (x *PaymentRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PaymentRequest.ProtoReflect.Descriptor instead.
-func (*PaymentRequest) Descriptor() ([]byte, []int) {
-	return file_shared_proto_transaction_proto_rawDescGZIP(), []int{2}
+// Deprecated: Use TransactionRequest.ProtoReflect.Descriptor instead.
+func (*TransactionRequest) Descriptor() ([]byte, []int) {
+	return file_shared_proto_transaction_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *PaymentRequest) GetFromAccountId() int32 {
+func (x *TransactionRequest) GetAccountId() int32 {
 	if x != nil {
-		return x.FromAccountId
+		return x.AccountId
 	}
 	return 0
 }
 
-func (x *PaymentRequest) GetToAccountId() int32 {
+func (x *TransactionRequest) GetAmount() int32 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *TransactionRequest) GetType() TransactionType {
+	if x != nil {
+		return x.Type
+	}
+	return TransactionType_TRANSACTION_TYPE_UNSPECIFIED
+}
+
+func (x *TransactionRequest) GetToAccountId() *wrapperspb.Int32Value {
 	if x != nil {
 		return x.ToAccountId
 	}
-	return 0
+	return nil
 }
 
-func (x *PaymentRequest) GetAmount() int32 {
-	if x != nil {
-		return x.Amount
-	}
-	return 0
-}
-
-type DepositResponse struct {
+type TransactionResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Status        TransactionStatus      `protobuf:"varint,1,opt,name=status,proto3,enum=proto.TransactionStatus" json:"status,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DepositResponse) Reset() {
-	*x = DepositResponse{}
-	mi := &file_shared_proto_transaction_proto_msgTypes[3]
+func (x *TransactionResponse) Reset() {
+	*x = TransactionResponse{}
+	mi := &file_shared_proto_transaction_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DepositResponse) String() string {
+func (x *TransactionResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DepositResponse) ProtoMessage() {}
+func (*TransactionResponse) ProtoMessage() {}
 
-func (x *DepositResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_shared_proto_transaction_proto_msgTypes[3]
+func (x *TransactionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_shared_proto_transaction_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -269,136 +227,51 @@ func (x *DepositResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DepositResponse.ProtoReflect.Descriptor instead.
-func (*DepositResponse) Descriptor() ([]byte, []int) {
-	return file_shared_proto_transaction_proto_rawDescGZIP(), []int{3}
+// Deprecated: Use TransactionResponse.ProtoReflect.Descriptor instead.
+func (*TransactionResponse) Descriptor() ([]byte, []int) {
+	return file_shared_proto_transaction_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *DepositResponse) GetStatus() TransactionStatus {
+func (x *TransactionResponse) GetStatus() TransactionStatus {
 	if x != nil {
 		return x.Status
 	}
 	return TransactionStatus_TRANSACTION_STATUS_UNKNOWN
 }
 
-type WithdrawResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Status        TransactionStatus      `protobuf:"varint,1,opt,name=status,proto3,enum=proto.TransactionStatus" json:"status,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *WithdrawResponse) Reset() {
-	*x = WithdrawResponse{}
-	mi := &file_shared_proto_transaction_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *WithdrawResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*WithdrawResponse) ProtoMessage() {}
-
-func (x *WithdrawResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_shared_proto_transaction_proto_msgTypes[4]
+func (x *TransactionResponse) GetMessage() string {
 	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
+		return x.Message
 	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use WithdrawResponse.ProtoReflect.Descriptor instead.
-func (*WithdrawResponse) Descriptor() ([]byte, []int) {
-	return file_shared_proto_transaction_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *WithdrawResponse) GetStatus() TransactionStatus {
-	if x != nil {
-		return x.Status
-	}
-	return TransactionStatus_TRANSACTION_STATUS_UNKNOWN
-}
-
-type PaymentResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Status        TransactionStatus      `protobuf:"varint,1,opt,name=status,proto3,enum=proto.TransactionStatus" json:"status,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *PaymentResponse) Reset() {
-	*x = PaymentResponse{}
-	mi := &file_shared_proto_transaction_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PaymentResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PaymentResponse) ProtoMessage() {}
-
-func (x *PaymentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_shared_proto_transaction_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PaymentResponse.ProtoReflect.Descriptor instead.
-func (*PaymentResponse) Descriptor() ([]byte, []int) {
-	return file_shared_proto_transaction_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *PaymentResponse) GetStatus() TransactionStatus {
-	if x != nil {
-		return x.Status
-	}
-	return TransactionStatus_TRANSACTION_STATUS_UNKNOWN
+	return ""
 }
 
 var File_shared_proto_transaction_proto protoreflect.FileDescriptor
 
 const file_shared_proto_transaction_proto_rawDesc = "" +
 	"\n" +
-	"\x1eshared/proto/transaction.proto\x12\x05proto\"L\n" +
-	"\x0eDepositRequest\x12\"\n" +
-	"\rto_account_id\x18\x01 \x01(\x05R\vtoAccountId\x12\x16\n" +
-	"\x06amount\x18\x02 \x01(\x05R\x06amount\"Q\n" +
-	"\x0fWithdrawRequest\x12&\n" +
-	"\x0ffrom_account_id\x18\x01 \x01(\x05R\rfromAccountId\x12\x16\n" +
-	"\x06amount\x18\x02 \x01(\x05R\x06amount\"t\n" +
-	"\x0ePaymentRequest\x12&\n" +
-	"\x0ffrom_account_id\x18\x01 \x01(\x05R\rfromAccountId\x12\"\n" +
-	"\rto_account_id\x18\x02 \x01(\x05R\vtoAccountId\x12\x16\n" +
-	"\x06amount\x18\x03 \x01(\x05R\x06amount\"C\n" +
-	"\x0fDepositResponse\x120\n" +
-	"\x06status\x18\x01 \x01(\x0e2\x18.proto.TransactionStatusR\x06status\"D\n" +
-	"\x10WithdrawResponse\x120\n" +
-	"\x06status\x18\x01 \x01(\x0e2\x18.proto.TransactionStatusR\x06status\"C\n" +
-	"\x0fPaymentResponse\x120\n" +
-	"\x06status\x18\x01 \x01(\x0e2\x18.proto.TransactionStatusR\x06status*\x92\x01\n" +
+	"\x1eshared/proto/transaction.proto\x12\x05proto\x1a\x1egoogle/protobuf/wrappers.proto\"\xb8\x01\n" +
+	"\x12TransactionRequest\x12\x1d\n" +
+	"\n" +
+	"account_id\x18\x01 \x01(\x05R\taccountId\x12\x16\n" +
+	"\x06amount\x18\x02 \x01(\x05R\x06amount\x12*\n" +
+	"\x04type\x18\x03 \x01(\x0e2\x16.proto.TransactionTypeR\x04type\x12?\n" +
+	"\rto_account_id\x18\x04 \x01(\v2\x1b.google.protobuf.Int32ValueR\vtoAccountId\"a\n" +
+	"\x13TransactionResponse\x120\n" +
+	"\x06status\x18\x01 \x01(\x0e2\x18.proto.TransactionStatusR\x06status\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage*\x95\x01\n" +
 	"\x11TransactionStatus\x12\x1e\n" +
-	"\x1aTRANSACTION_STATUS_UNKNOWN\x10\x00\x12\x1e\n" +
-	"\x1aTRANSACTION_STATUS_PENDING\x10\x01\x12\x1e\n" +
+	"\x1aTRANSACTION_STATUS_UNKNOWN\x10\x00\x12!\n" +
+	"\x1dTRANSACTION_STATUS_PROCESSING\x10\x01\x12\x1e\n" +
 	"\x1aTRANSACTION_STATUS_SUCCESS\x10\x02\x12\x1d\n" +
-	"\x19TRANSACTION_STATUS_FAILED\x10\x032\xc5\x01\n" +
-	"\x12TransactionService\x128\n" +
-	"\aDeposit\x12\x15.proto.DepositRequest\x1a\x16.proto.DepositResponse\x12;\n" +
-	"\bWithdraw\x12\x16.proto.WithdrawRequest\x1a\x17.proto.WithdrawResponse\x128\n" +
-	"\aPayment\x12\x15.proto.PaymentRequest\x1a\x16.proto.PaymentResponseB\x15Z\x13/shared/proto;protob\x06proto3"
+	"\x19TRANSACTION_STATUS_FAILED\x10\x03*\x8e\x01\n" +
+	"\x0fTransactionType\x12 \n" +
+	"\x1cTRANSACTION_TYPE_UNSPECIFIED\x10\x00\x12\x1c\n" +
+	"\x18TRANSACTION_TYPE_DEPOSIT\x10\x01\x12\x1d\n" +
+	"\x19TRANSACTION_TYPE_WITHDRAW\x10\x02\x12\x1c\n" +
+	"\x18TRANSACTION_TYPE_PAYMENT\x10\x032^\n" +
+	"\x12TransactionService\x12H\n" +
+	"\x0fSendTransaction\x12\x19.proto.TransactionRequest\x1a\x1a.proto.TransactionResponseB\x15Z\x13/shared/proto;protob\x06proto3"
 
 var (
 	file_shared_proto_transaction_proto_rawDescOnce sync.Once
@@ -412,29 +285,23 @@ func file_shared_proto_transaction_proto_rawDescGZIP() []byte {
 	return file_shared_proto_transaction_proto_rawDescData
 }
 
-var file_shared_proto_transaction_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_shared_proto_transaction_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_shared_proto_transaction_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_shared_proto_transaction_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_shared_proto_transaction_proto_goTypes = []any{
-	(TransactionStatus)(0),   // 0: proto.TransactionStatus
-	(*DepositRequest)(nil),   // 1: proto.DepositRequest
-	(*WithdrawRequest)(nil),  // 2: proto.WithdrawRequest
-	(*PaymentRequest)(nil),   // 3: proto.PaymentRequest
-	(*DepositResponse)(nil),  // 4: proto.DepositResponse
-	(*WithdrawResponse)(nil), // 5: proto.WithdrawResponse
-	(*PaymentResponse)(nil),  // 6: proto.PaymentResponse
+	(TransactionStatus)(0),        // 0: proto.TransactionStatus
+	(TransactionType)(0),          // 1: proto.TransactionType
+	(*TransactionRequest)(nil),    // 2: proto.TransactionRequest
+	(*TransactionResponse)(nil),   // 3: proto.TransactionResponse
+	(*wrapperspb.Int32Value)(nil), // 4: google.protobuf.Int32Value
 }
 var file_shared_proto_transaction_proto_depIdxs = []int32{
-	0, // 0: proto.DepositResponse.status:type_name -> proto.TransactionStatus
-	0, // 1: proto.WithdrawResponse.status:type_name -> proto.TransactionStatus
-	0, // 2: proto.PaymentResponse.status:type_name -> proto.TransactionStatus
-	1, // 3: proto.TransactionService.Deposit:input_type -> proto.DepositRequest
-	2, // 4: proto.TransactionService.Withdraw:input_type -> proto.WithdrawRequest
-	3, // 5: proto.TransactionService.Payment:input_type -> proto.PaymentRequest
-	4, // 6: proto.TransactionService.Deposit:output_type -> proto.DepositResponse
-	5, // 7: proto.TransactionService.Withdraw:output_type -> proto.WithdrawResponse
-	6, // 8: proto.TransactionService.Payment:output_type -> proto.PaymentResponse
-	6, // [6:9] is the sub-list for method output_type
-	3, // [3:6] is the sub-list for method input_type
+	1, // 0: proto.TransactionRequest.type:type_name -> proto.TransactionType
+	4, // 1: proto.TransactionRequest.to_account_id:type_name -> google.protobuf.Int32Value
+	0, // 2: proto.TransactionResponse.status:type_name -> proto.TransactionStatus
+	2, // 3: proto.TransactionService.SendTransaction:input_type -> proto.TransactionRequest
+	3, // 4: proto.TransactionService.SendTransaction:output_type -> proto.TransactionResponse
+	4, // [4:5] is the sub-list for method output_type
+	3, // [3:4] is the sub-list for method input_type
 	3, // [3:3] is the sub-list for extension type_name
 	3, // [3:3] is the sub-list for extension extendee
 	0, // [0:3] is the sub-list for field type_name
@@ -450,8 +317,8 @@ func file_shared_proto_transaction_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_shared_proto_transaction_proto_rawDesc), len(file_shared_proto_transaction_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   6,
+			NumEnums:      2,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

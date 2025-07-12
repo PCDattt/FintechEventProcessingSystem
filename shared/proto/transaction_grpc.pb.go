@@ -19,18 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TransactionService_Deposit_FullMethodName  = "/proto.TransactionService/Deposit"
-	TransactionService_Withdraw_FullMethodName = "/proto.TransactionService/Withdraw"
-	TransactionService_Payment_FullMethodName  = "/proto.TransactionService/Payment"
+	TransactionService_SendTransaction_FullMethodName = "/proto.TransactionService/SendTransaction"
 )
 
 // TransactionServiceClient is the client API for TransactionService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TransactionServiceClient interface {
-	Deposit(ctx context.Context, in *DepositRequest, opts ...grpc.CallOption) (*DepositResponse, error)
-	Withdraw(ctx context.Context, in *WithdrawRequest, opts ...grpc.CallOption) (*WithdrawResponse, error)
-	Payment(ctx context.Context, in *PaymentRequest, opts ...grpc.CallOption) (*PaymentResponse, error)
+	SendTransaction(ctx context.Context, in *TransactionRequest, opts ...grpc.CallOption) (*TransactionResponse, error)
 }
 
 type transactionServiceClient struct {
@@ -41,30 +37,10 @@ func NewTransactionServiceClient(cc grpc.ClientConnInterface) TransactionService
 	return &transactionServiceClient{cc}
 }
 
-func (c *transactionServiceClient) Deposit(ctx context.Context, in *DepositRequest, opts ...grpc.CallOption) (*DepositResponse, error) {
+func (c *transactionServiceClient) SendTransaction(ctx context.Context, in *TransactionRequest, opts ...grpc.CallOption) (*TransactionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DepositResponse)
-	err := c.cc.Invoke(ctx, TransactionService_Deposit_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *transactionServiceClient) Withdraw(ctx context.Context, in *WithdrawRequest, opts ...grpc.CallOption) (*WithdrawResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(WithdrawResponse)
-	err := c.cc.Invoke(ctx, TransactionService_Withdraw_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *transactionServiceClient) Payment(ctx context.Context, in *PaymentRequest, opts ...grpc.CallOption) (*PaymentResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(PaymentResponse)
-	err := c.cc.Invoke(ctx, TransactionService_Payment_FullMethodName, in, out, cOpts...)
+	out := new(TransactionResponse)
+	err := c.cc.Invoke(ctx, TransactionService_SendTransaction_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,9 +51,7 @@ func (c *transactionServiceClient) Payment(ctx context.Context, in *PaymentReque
 // All implementations must embed UnimplementedTransactionServiceServer
 // for forward compatibility.
 type TransactionServiceServer interface {
-	Deposit(context.Context, *DepositRequest) (*DepositResponse, error)
-	Withdraw(context.Context, *WithdrawRequest) (*WithdrawResponse, error)
-	Payment(context.Context, *PaymentRequest) (*PaymentResponse, error)
+	SendTransaction(context.Context, *TransactionRequest) (*TransactionResponse, error)
 	mustEmbedUnimplementedTransactionServiceServer()
 }
 
@@ -88,14 +62,8 @@ type TransactionServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedTransactionServiceServer struct{}
 
-func (UnimplementedTransactionServiceServer) Deposit(context.Context, *DepositRequest) (*DepositResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Deposit not implemented")
-}
-func (UnimplementedTransactionServiceServer) Withdraw(context.Context, *WithdrawRequest) (*WithdrawResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Withdraw not implemented")
-}
-func (UnimplementedTransactionServiceServer) Payment(context.Context, *PaymentRequest) (*PaymentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Payment not implemented")
+func (UnimplementedTransactionServiceServer) SendTransaction(context.Context, *TransactionRequest) (*TransactionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendTransaction not implemented")
 }
 func (UnimplementedTransactionServiceServer) mustEmbedUnimplementedTransactionServiceServer() {}
 func (UnimplementedTransactionServiceServer) testEmbeddedByValue()                            {}
@@ -118,56 +86,20 @@ func RegisterTransactionServiceServer(s grpc.ServiceRegistrar, srv TransactionSe
 	s.RegisterService(&TransactionService_ServiceDesc, srv)
 }
 
-func _TransactionService_Deposit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DepositRequest)
+func _TransactionService_SendTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TransactionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TransactionServiceServer).Deposit(ctx, in)
+		return srv.(TransactionServiceServer).SendTransaction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TransactionService_Deposit_FullMethodName,
+		FullMethod: TransactionService_SendTransaction_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServiceServer).Deposit(ctx, req.(*DepositRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _TransactionService_Withdraw_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(WithdrawRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TransactionServiceServer).Withdraw(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: TransactionService_Withdraw_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServiceServer).Withdraw(ctx, req.(*WithdrawRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _TransactionService_Payment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PaymentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TransactionServiceServer).Payment(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: TransactionService_Payment_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServiceServer).Payment(ctx, req.(*PaymentRequest))
+		return srv.(TransactionServiceServer).SendTransaction(ctx, req.(*TransactionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -180,16 +112,8 @@ var TransactionService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*TransactionServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Deposit",
-			Handler:    _TransactionService_Deposit_Handler,
-		},
-		{
-			MethodName: "Withdraw",
-			Handler:    _TransactionService_Withdraw_Handler,
-		},
-		{
-			MethodName: "Payment",
-			Handler:    _TransactionService_Payment_Handler,
+			MethodName: "SendTransaction",
+			Handler:    _TransactionService_SendTransaction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

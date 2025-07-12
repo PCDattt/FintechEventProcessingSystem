@@ -2,45 +2,36 @@ syntax = "proto3";
 
 package proto;
 
+import "google/protobuf/wrappers.proto";
+
 option go_package = "/shared/proto;proto";
 
 service TransactionService {
-    rpc Deposit(DepositRequest) returns (DepositResponse);
-    rpc Withdraw(WithdrawRequest) returns (WithdrawResponse);
-    rpc Payment(PaymentRequest) returns (PaymentResponse);
+    rpc SendTransaction(TransactionRequest) returns (TransactionResponse);
 }
 
 enum TransactionStatus {
     TRANSACTION_STATUS_UNKNOWN = 0;
-    TRANSACTION_STATUS_PENDING = 1;
+    TRANSACTION_STATUS_PROCESSING = 1;
     TRANSACTION_STATUS_SUCCESS = 2;
     TRANSACTION_STATUS_FAILED  = 3;
 }
 
-message DepositRequest {
-    int32 to_account_id = 1;
+enum TransactionType {
+    TRANSACTION_TYPE_UNSPECIFIED = 0;
+    TRANSACTION_TYPE_DEPOSIT = 1;
+    TRANSACTION_TYPE_WITHDRAW = 2;
+    TRANSACTION_TYPE_PAYMENT = 3;
+}
+
+message TransactionRequest {
+    int32 account_id = 1;
     int32 amount = 2;
+    TransactionType type = 3;
+    google.protobuf.Int32Value to_account_id = 4;
 }
 
-message WithdrawRequest {
-    int32 from_account_id = 1;
-    int32 amount = 2;
-}
-
-message PaymentRequest {
-    int32 from_account_id = 1;
-    int32 to_account_id = 2;
-    int32 amount = 3;
-}
-
-message DepositResponse {
+message TransactionResponse {
     TransactionStatus status = 1;
-}
-
-message WithdrawResponse {
-    TransactionStatus status = 1;
-}
-
-message PaymentResponse {
-    TransactionStatus status = 1;
+    string message = 2;
 }

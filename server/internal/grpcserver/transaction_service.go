@@ -7,6 +7,7 @@ import (
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/db"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/mapper"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/publisher"
+	"github.com/PCDattt/FintechEventProcessingSystem/shared/enum"
 	"github.com/PCDattt/FintechEventProcessingSystem/shared/proto"
 )
 
@@ -23,57 +24,33 @@ func NewTransactionServiceServer(q *db.Queries, p *publisher.Publisher) *Transac
 	}
 }
 
-func (s *TransactionServiceServer) Deposit(ctx context.Context, req *proto.DepositRequest) (*proto.DepositResponse, error) {
-	model := mapper.DepositProtoToModel(req)
+func (s *TransactionServiceServer) SendTransaction(ctx context.Context, req *proto.TransactionRequest) (*proto.TransactionResponse, error) {
+	model := mapper.TransactionProtoToModel(req)
+	model.Status = enum.TransactionStatusProcessing
+	model.Message = "Processing"
 	params := mapper.TransactionModelToCreateParams(model)
 
 	dbTransaction, err := s.q.CreateTransaction(ctx, params)
 	if err != nil {
-		return &proto.DepositResponse{}, err
+		log.Printf("Cannot create transaction in database: %v", err)
+		return &proto.TransactionResponse {
+			Status: proto.TransactionStatus_TRANSACTION_STATUS_FAILED,
+			Message: "Cannot create transaction",
+		}, err
 	}
 
 	model = mapper.DBTransactionToModel(dbTransaction)
 
 	if err := s.p.PublishTransaction(model); err != nil {
-		return &proto.DepositResponse{}, err
+		log.Printf("Cannot send transaction to RabbitMQ: %v", err)
+		return &proto.TransactionResponse {
+			Status: proto.TransactionStatus_TRANSACTION_STATUS_FAILED,
+			Message: "Cannot process transaction",
+		}, err
 	}
 
-	return &proto.DepositResponse{Status: proto.TransactionStatus(dbTransaction.Status)}, nil
-}
-
-func (s *TransactionServiceServer) Withdraw(ctx context.Context, req *proto.WithdrawRequest) (*proto.WithdrawResponse, error) {
-	model := mapper.WithdrawProtoToModel(req)
-	params := mapper.TransactionModelToCreateParams(model)
-	dbTransaction, err := s.q.CreateTransaction(ctx, params)
-	if err != nil {
-		return &proto.WithdrawResponse{}, err
-	}
-
-	model = mapper.DBTransactionToModel(dbTransaction)
-
-	if err := s.p.PublishTransaction(model); err != nil {
-		log.Fatalf("can't send message to rabbitMQ: %v", err)
-		return &proto.WithdrawResponse{}, err
-	}
-
-	return &proto.WithdrawResponse{Status: proto.TransactionStatus(dbTransaction.Status)}, nil
-}
-
-func (s *TransactionServiceServer) Payment(ctx context.Context, req *proto.PaymentRequest) (*proto.PaymentResponse, error) {
-	model := mapper.PaymentProtoToModel(req)
-	params := mapper.TransactionModelToCreateParams(model)
-	dbTransaction, err := s.q.CreateTransaction(ctx, params)
-	if err != nil {
-		log.Fatalf("can't send message to rabbitMQ: %v", err)
-		return &proto.PaymentResponse{}, err
-	}
-
-	model = mapper.DBTransactionToModel(dbTransaction)
-
-	if err := s.p.PublishTransaction(model); err != nil {
-		log.Fatalf("can't send message to rabbitMQ: %v", err)
-		return &proto.PaymentResponse{}, err
-	}
-
-	return &proto.PaymentResponse{Status: proto.TransactionStatus(dbTransaction.Status)}, nil
+	return &proto.TransactionResponse{
+		Status: proto.TransactionStatus(dbTransaction.Status),
+		Message: "Processing transaction",
+		}, nil
 }

@@ -1,7 +1,7 @@
 DB_URL=postgres://postgres:postgres@localhost:5432/gofinance?sslmode=disable
 MIGRATE_PATH=server/db/migration
 
-.PHONY: migrate-up migrate-down migrate-create migrate-status run-server run-client
+.PHONY: migrate-up migrate-down migrate-create migrate-status run-server run-client protoc
 
 migrate-up:
 	migrate -path $(MIGRATE_PATH) -database "$(DB_URL)" up
@@ -24,3 +24,6 @@ run-server:
 
 run-client:
 	go run ./client/cmd/main.go
+
+protoc:
+	protoc --go_out=. --go-grpc_out=. --proto_path=. shared/proto/transaction.proto

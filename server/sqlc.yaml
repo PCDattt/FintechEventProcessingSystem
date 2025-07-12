@@ -29,9 +29,6 @@ packages:
         nullable: true
         go_type:
           type:  "int"
-      - column: "transactions.from_account_id"
-        go_type:
-          type: "*int"
       - column: "transactions.to_account_id"
         go_type:
           type: "*int"

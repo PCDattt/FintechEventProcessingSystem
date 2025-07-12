@@ -3,15 +3,15 @@ package enum
 type TransactionStatus int
 
 const (
-	TransactionStatusPending TransactionStatus = iota + 1
+	TransactionStatusProcessing TransactionStatus = iota + 1
 	TransactionStatusSuccess
 	TransactionStatusFailed
 )
 
 func (s TransactionStatus) String() string {
 	switch s {
-	case TransactionStatusPending:
-		return "pending"
+	case TransactionStatusProcessing:
+		return "processing"
 	case TransactionStatusSuccess:
 		return "success"
 	case TransactionStatusFailed:

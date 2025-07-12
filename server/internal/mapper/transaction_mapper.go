@@ -7,52 +7,29 @@ import (
 	"github.com/PCDattt/FintechEventProcessingSystem/shared/proto"
 )
 
-func DepositProtoToModel(tx *proto.DepositRequest) model.Transaction {
-	toID := int(tx.ToAccountId)
+func TransactionProtoToModel(tx *proto.TransactionRequest) model.Transaction {
+	var toID *int
+	if tx.ToAccountId != nil {
+		val := int(tx.ToAccountId.Value)
+		toID = &val
+	}
+
 	return model.Transaction{
-		Type: enum.TransactionTypeDeposit,
-		Status: enum.TransactionStatusPending,
+		Type: enum.TransactionType(tx.Type),
 		Amount: int(tx.Amount),
-		Message: "Processing",
-		ToAccountId: &toID,
-		FromAccountId: nil,
-	}
-}
-
-func WithdrawProtoToModel(tx *proto.WithdrawRequest) model.Transaction {
-	fromID := int(tx.FromAccountId)
-	return model.Transaction {
-		Type: enum.TransactionTypeWithdraw,
-		Status: enum.TransactionStatusPending,
-		Amount: int(tx.Amount),
-		Message: "Processing",
-		ToAccountId: nil,
-		FromAccountId: &fromID,
-	}
-}
-
-func PaymentProtoToModel(tx *proto.PaymentRequest) model.Transaction {
-	fromID := int(tx.FromAccountId)
-	toID := int(tx.ToAccountId)
-
-	return model.Transaction {
-		Type: enum.TransactionTypePayment,
-		Status: enum.TransactionStatusPending,
-		Amount: int(tx.Amount),
-		Message: "Processing",
-		ToAccountId: &fromID,
-		FromAccountId: &toID,
+		AccountId: int(tx.AccountId),
+		ToAccountId: toID,
 	}
 }
 
 func TransactionModelToCreateParams(tx model.Transaction) db.CreateTransactionParams {
 	return db.CreateTransactionParams{
 		Type: int32(tx.Type),
-		Status: int32(enum.TransactionStatusPending),
+		Status: int32(tx.Status),
 		Amount: int32(tx.Amount),
-		Message: "Processing",
+		Message: tx.Message,
+		AccountID: int32(tx.AccountId),
 		ToAccountID: tx.ToAccountId,
-		FromAccountID: tx.FromAccountId,
 	}
 }
 
@@ -63,7 +40,7 @@ func DBTransactionToModel(tx db.Transaction) model.Transaction {
 		Status: enum.TransactionStatus(tx.Status),
 		Amount: int(tx.Amount),
 		Message: tx.Message,
-		FromAccountId: tx.FromAccountID,
+		AccountId: int(tx.AccountID),
 		ToAccountId: tx.ToAccountID,
 		CreatedDate: tx.CreatedDate,
 	}
