@@ -1,4 +1,4 @@
 # FintechEventProcessingSystem
 
 ## 📊 Sequence Diagram
-![Sequence Diagram](images/Sequence diagram.png)
+![Sequence Diagram](images/sequence_diagram.png)
