@@ -59,7 +59,7 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer()
-	proto.RegisterTransactionServiceServer(grpcServer, grpcserver.NewTransactionServiceServer())
+	proto.RegisterTransactionServiceServer(grpcServer, grpcserver.NewTransactionServiceServer(queries))
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()

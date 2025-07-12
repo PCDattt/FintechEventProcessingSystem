@@ -10,7 +10,7 @@ import (
 )
 
 const createTransaction = `-- name: CreateTransaction :one
-INSERT INTO transactions (type, status, amount, message, from_Account_Id, to_Account_Id)
+INSERT INTO transactions (type, status, amount, message, from_account_id, to_account_id)
 VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING id, status, message
 `
@@ -20,8 +20,8 @@ type CreateTransactionParams struct {
 	Status        int32  `json:"status"`
 	Amount        int32  `json:"amount"`
 	Message       string `json:"message"`
-	FromAccountID int32  `json:"from_account_id"`
-	ToAccountID   int32  `json:"to_account_id"`
+	FromAccountID *int   `json:"from_account_id"`
+	ToAccountID   *int   `json:"to_account_id"`
 }
 
 type CreateTransactionRow struct {

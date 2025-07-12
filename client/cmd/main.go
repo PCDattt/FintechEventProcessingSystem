@@ -35,7 +35,7 @@ func main() {
 
 	paymentReq := proto.PaymentRequest {
 		FromAccountId: 1,
-		ToAccountId: 2,
+		ToAccountId: 5,
 		Amount: 500,
 	}
 
