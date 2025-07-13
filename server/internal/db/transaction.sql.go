@@ -46,3 +46,32 @@ func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionPa
 	)
 	return i, err
 }
+
+const updateTransaction = `-- name: UpdateTransaction :one
+UPDATE transactions 
+SET status = $2, message = $3
+WHERE id = $1
+RETURNING id, type, status, amount, message, account_id, to_account_id, created_date
+`
+
+type UpdateTransactionParams struct {
+	ID      int32  `json:"id"`
+	Status  int32  `json:"status"`
+	Message string `json:"message"`
+}
+
+func (q *Queries) UpdateTransaction(ctx context.Context, arg UpdateTransactionParams) (Transaction, error) {
+	row := q.db.QueryRow(ctx, updateTransaction, arg.ID, arg.Status, arg.Message)
+	var i Transaction
+	err := row.Scan(
+		&i.ID,
+		&i.Type,
+		&i.Status,
+		&i.Amount,
+		&i.Message,
+		&i.AccountID,
+		&i.ToAccountID,
+		&i.CreatedDate,
+	)
+	return i, err
+}

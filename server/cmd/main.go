@@ -15,7 +15,7 @@ import (
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/db"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/grpcserver"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/handler"
-	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/publisher"
+	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/rabbitmq"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/router"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/service"
 	"github.com/PCDattt/FintechEventProcessingSystem/shared/config"
@@ -40,6 +40,7 @@ func main() {
 	queries := db.New(pool)
 	accountService := service.NewAccountService(queries)
 	accountHandler := handler.NewAccountHandler(accountService)
+	transactionService := service.NewTransactionService(queries)
 
 	r := router.NewRouter(accountHandler)
 
@@ -61,12 +62,14 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer()
-	publisher, err := publisher.NewPublisher(cfg.RabbitURL)
+	publisher, err := rabbitmq.NewPublisher(cfg.RabbitURL, cfg.TransactionQueueName)
 	if err != nil {
 		log.Fatal("failed to connect to RabbitMQ:", err)
 	}
 	defer publisher.Close()
-	proto.RegisterTransactionServiceServer(grpcServer, grpcserver.NewTransactionServiceServer(queries, publisher))
+
+
+	proto.RegisterTransactionServiceServer(grpcServer, grpcserver.NewTransactionServiceServer(transactionService, publisher))
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()

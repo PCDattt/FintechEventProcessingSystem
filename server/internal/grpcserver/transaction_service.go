@@ -4,42 +4,29 @@ import (
 	"context"
 	"log"
 
-	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/db"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/mapper"
-	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/publisher"
-	"github.com/PCDattt/FintechEventProcessingSystem/shared/enum"
+	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/rabbitmq"
+	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/service"
 	"github.com/PCDattt/FintechEventProcessingSystem/shared/proto"
 )
 
 type TransactionServiceServer struct {
 	proto.UnimplementedTransactionServiceServer
-	q *db.Queries
-	p *publisher.Publisher
+	svc service.TransactionService
+	p *rabbitmq.Publisher
 }
 
-func NewTransactionServiceServer(q *db.Queries, p *publisher.Publisher) *TransactionServiceServer {
+func NewTransactionServiceServer(svc service.TransactionService, p *rabbitmq.Publisher) *TransactionServiceServer {
 	return &TransactionServiceServer{
-		q: q,
+		svc: svc,
 		p: p,
 	}
 }
 
 func (s *TransactionServiceServer) SendTransaction(ctx context.Context, req *proto.TransactionRequest) (*proto.TransactionResponse, error) {
 	model := mapper.TransactionProtoToModel(req)
-	model.Status = enum.TransactionStatusProcessing
-	model.Message = "Processing"
-	params := mapper.TransactionModelToCreateParams(model)
-
-	dbTransaction, err := s.q.CreateTransaction(ctx, params)
-	if err != nil {
-		log.Printf("Cannot create transaction in database: %v", err)
-		return &proto.TransactionResponse {
-			Status: proto.TransactionStatus_TRANSACTION_STATUS_FAILED,
-			Message: "Cannot create transaction",
-		}, err
-	}
-
-	model = mapper.DBTransactionToModel(dbTransaction)
+	
+	s.svc.CreateTransaction(ctx, model)
 
 	if err := s.p.PublishTransaction(model); err != nil {
 		log.Printf("Cannot send transaction to RabbitMQ: %v", err)
@@ -50,7 +37,7 @@ func (s *TransactionServiceServer) SendTransaction(ctx context.Context, req *pro
 	}
 
 	return &proto.TransactionResponse{
-		Status: proto.TransactionStatus(dbTransaction.Status),
+		Status: proto.TransactionStatus(model.Status),
 		Message: "Processing transaction",
 		}, nil
 }

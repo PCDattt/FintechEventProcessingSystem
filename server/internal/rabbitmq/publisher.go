@@ -1,4 +1,4 @@
-package publisher
+package rabbitmq
 
 import (
 	"encoding/json"
@@ -13,7 +13,7 @@ type Publisher struct {
 	queue amqp.Queue
 }
 
-func NewPublisher(rabbitURL string) (*Publisher, error) {
+func NewPublisher(rabbitURL string, queueName string) (*Publisher, error) {
 	conn, err := amqp.Dial(rabbitURL)
 	if err != nil {
 		return nil, err
@@ -25,7 +25,7 @@ func NewPublisher(rabbitURL string) (*Publisher, error) {
 	}
 	
 	q, err := ch.QueueDeclare(
-		"transactions",
+		queueName,
 		true,
 		false,
 		false,

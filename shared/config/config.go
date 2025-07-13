@@ -11,6 +11,7 @@ type Config struct {
 	DBURL string
 	Port string
 	RabbitURL string
+	TransactionQueueName string
 }
 
 func LoadConfig() Config {
@@ -23,6 +24,7 @@ func LoadConfig() Config {
 		DBURL: getEnv("DB_URL", "postgres://postgres:postgres@localhost:5432/gofinance?sslmode=disable"),
 		Port:  getEnv("PORT", "8080"),
 		RabbitURL: getEnv("RabbitURL", "amqp://guest:guest@localhost:5672/"),
+		TransactionQueueName: getEnv("TransactionQueueName","transactions"),
 	}
 
 	return cfg
