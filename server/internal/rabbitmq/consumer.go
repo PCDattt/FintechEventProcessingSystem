@@ -1,6 +1,7 @@
 package rabbitmq
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 
@@ -44,7 +45,7 @@ func NewConsumer(rabbitURL string, queueName string) (*Consumer, error) {
 	}, nil
 }
 
-func (c *Consumer) StartConsuming(handler func(tx model.Transaction) error) error {
+func (c *Consumer) StartConsuming(ctx context.Context, handler func(ctx context.Context, tx model.Transaction) (model.Transaction, error)) error {
 	msgs, err := c.channel.Consume(
 		c.queue.Name,
 		"",
@@ -67,9 +68,11 @@ func (c *Consumer) StartConsuming(handler func(tx model.Transaction) error) erro
 			}
 			log.Printf("Received transaction: %v", tx)
 
-			if err := handler(tx); err != nil {
+			result, err := handler(ctx, tx)
+			if err != nil {
 				log.Printf("Transaction handler error: %v", err)
 			}
+			log.Printf("Processed transaction: %v", result)
 		}
 	}()
 

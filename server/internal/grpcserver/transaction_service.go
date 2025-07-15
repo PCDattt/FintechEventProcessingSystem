@@ -26,7 +26,15 @@ func NewTransactionServiceServer(svc service.TransactionService, p *rabbitmq.Pub
 func (s *TransactionServiceServer) SendTransaction(ctx context.Context, req *proto.TransactionRequest) (*proto.TransactionResponse, error) {
 	model := mapper.TransactionProtoToModel(req)
 	
-	s.svc.CreateTransaction(ctx, model)
+	model, err := s.svc.CreateTransaction(ctx, model)
+
+	if err != nil {
+		log.Printf("Cannot create transaction in database: %v", err)
+		return &proto.TransactionResponse {
+			Status: proto.TransactionStatus_TRANSACTION_STATUS_FAILED,
+			Message: "Cannot process transaction",
+		}, err
+	}
 
 	if err := s.p.PublishTransaction(model); err != nil {
 		log.Printf("Cannot send transaction to RabbitMQ: %v", err)
@@ -39,5 +47,5 @@ func (s *TransactionServiceServer) SendTransaction(ctx context.Context, req *pro
 	return &proto.TransactionResponse{
 		Status: proto.TransactionStatus(model.Status),
 		Message: "Processing transaction",
-		}, nil
+	}, nil
 }

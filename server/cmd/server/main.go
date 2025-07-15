@@ -40,7 +40,7 @@ func main() {
 	queries := db.New(pool)
 	accountService := service.NewAccountService(queries)
 	accountHandler := handler.NewAccountHandler(accountService)
-	transactionService := service.NewTransactionService(queries)
+	transactionService := service.NewTransactionService(pool, queries)
 
 	r := router.NewRouter(accountHandler)
 

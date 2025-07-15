@@ -36,7 +36,7 @@ func NewPublisher(rabbitURL string, queueName string) (*Publisher, error) {
 		return nil, err
 	}
 
-	return &Publisher{
+	return &Publisher {
 		conn: conn,
 		channel: ch,
 		queue: q,
@@ -54,7 +54,7 @@ func (p *Publisher) PublishTransaction(tx model.Transaction) error {
 		p.queue.Name,
 		false,
 		false,
-		amqp.Publishing{
+		amqp.Publishing {
 			ContentType: "application/json",
 			Body: body,
 		},
