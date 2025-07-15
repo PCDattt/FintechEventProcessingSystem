@@ -14,7 +14,7 @@ import (
 
 type TransactionService interface {
 	CreateTransaction(ctx context.Context, tx model.Transaction) (model.Transaction, error)
-	ProcessTransaction(ctx context.Context, tx model.Transaction) error
+	ProcessTransaction(ctx context.Context, tx model.Transaction) (model.Transaction, error)
 }
 
 type transactionService struct {
@@ -60,7 +60,17 @@ func (s *transactionService) ProcessTransaction(ctx context.Context, tx model.Tr
 	newBalance := account.Amount
 	if tx.Type == enum.TransactionTypeWithdraw {
 		if account.Amount < int32(tx.Amount) {
-			return model.Transaction{}, fmt.Errorf("insufficient balance")
+			dbTransaction, err := qtx.UpdateTransaction(ctx, db.UpdateTransactionParams{
+				ID: int32(tx.Id),
+				Status: int32(enum.TransactionStatusFailed),
+				Message: "Processed, insufficient balance",
+			})
+			if err != nil {
+				return model.Transaction{}, err
+			}
+
+			model := mapper.DBTransactionToModel(dbTransaction)
+			return model, fmt.Errorf("insufficient balance")
 		}
 		newBalance -= int32(tx.Amount)
 	}
@@ -71,7 +81,17 @@ func (s *transactionService) ProcessTransaction(ctx context.Context, tx model.Tr
 
 	if tx.Type == enum.TransactionTypePayment {
 		if account.Amount < int32(tx.Amount) {
-			return model.Transaction{}, fmt.Errorf("insufficient balance")
+			dbTransaction, err := qtx.UpdateTransaction(ctx, db.UpdateTransactionParams{
+				ID: int32(tx.Id),
+				Status: int32(enum.TransactionStatusFailed),
+				Message: "Processed, insufficient balance",
+			})
+			if err != nil {
+				return model.Transaction{}, err
+			}
+			
+			model := mapper.DBTransactionToModel(dbTransaction)
+			return model, fmt.Errorf("insufficient balance")
 		}
 		newBalance -= int32(tx.Amount)
 		toAccount, err := qtx.GetAccountForUpdate(ctx, int32(*tx.ToAccountId))
