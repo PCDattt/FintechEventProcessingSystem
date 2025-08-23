@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/handler/request"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/service"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/mapper"
+	"github.com/gin-gonic/gin"
 )
 
 type AccountHandler struct {
@@ -16,21 +16,21 @@ func NewAccountHandler(svc service.AccountService) *AccountHandler {
 	return &AccountHandler{svc: svc}
 }
 
-func (h *AccountHandler) CreateAccount(w http.ResponseWriter, r *http.Request) {
+func (h *AccountHandler) CreateAccount(c *gin.Context) {
 	var req request.CreateAccountRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "invalid request", http.StatusBadRequest)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	
 	account := mapper.CreateAccountRequestToModel(req)
-	account, err := h.svc.CreateAccount(r.Context(), account)
+	account, err := h.svc.CreateAccount(c, account)
 	if err != nil {
-		http.Error(w, "could not create account", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	res := mapper.ModelAccountToCreateResponse(account)
 
-	json.NewEncoder(w).Encode(res)
+	c.JSON(http.StatusOK, res)
 }
