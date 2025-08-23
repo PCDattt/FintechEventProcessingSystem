@@ -16,11 +16,11 @@ import (
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/grpcserver"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/handler"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/rabbitmq"
-	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/router"
 	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/service"
 	"github.com/PCDattt/FintechEventProcessingSystem/shared/config"
 	"github.com/PCDattt/FintechEventProcessingSystem/shared/proto"
 	"github.com/jackc/pgx/v5/pgxpool"
+    "github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -42,12 +42,13 @@ func main() {
 	accountHandler := handler.NewAccountHandler(accountService)
 	transactionService := service.NewTransactionService(pool, queries)
 
-	r := router.NewRouter(accountHandler)
+	r := gin.Default()
+	r.POST("/account", accountHandler.CreateAccount)
 
 	httpServer := &http.Server{
-	Addr:    ":8080",
-	Handler: r,
-}
+		Addr:    ":8080",
+		Handler: r,
+	}
 
 	log.Println("http server listening on: 8080")
 	go func() {
@@ -56,23 +57,22 @@ func main() {
 		}
 	}()
 
-	lis, err := net.Listen("tcp", ":50051")
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-
-	grpcServer := grpc.NewServer()
 	publisher, err := rabbitmq.NewPublisher(cfg.RabbitURL, cfg.TransactionQueueName)
 	if err != nil {
 		log.Fatal("failed to connect to RabbitMQ:", err)
 	}
 	defer publisher.Close()
-
-
-	proto.RegisterTransactionServiceServer(grpcServer, grpcserver.NewTransactionServiceServer(transactionService, publisher))
-
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer stop()
+	
+	grpcTransactionService := grpcserver.NewTransactionServiceServer(transactionService, publisher)
+	
+	grpcServer := grpc.NewServer()
+	proto.RegisterTransactionServiceServer(grpcServer, grpcTransactionService)
+	
+	lis, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+	defer lis.Close()
 
 	log.Println("gRPC server listening on: 50051")
 	go func() {
@@ -80,7 +80,9 @@ func main() {
 			log.Fatalf("failed to serve grpc: %v", err)
 		}
 	}()
-
+		
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
 	<-ctx.Done()
 	log.Println("Shutting down...")
 
