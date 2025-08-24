@@ -20,13 +20,13 @@ migrate-status:
 	migrate -path $(MIGRATE_PATH) -database "$(DB_URL)" version
 
 run-server:
-	go run ./server/cmd/server/main.go
+	go run ./server/cmd/server/main.go >> ./logs/gofinance.log 2>&1
 
 run-client:
-	go run ./client/cmd/main.go
+	go run ./client/cmd/main.go >> ./logs/gofinance.log 2>&1
 
 run-worker:
-	go run ./server/cmd/worker/main.go
+	go run ./server/cmd/worker/main.go >> ./logs/gofinance.log 2>&1
 
 protoc:
 	protoc --go_out=. --go-grpc_out=. --proto_path=. shared/proto/transaction.proto
