@@ -1,0 +1,44 @@
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /account                  --> github.com/PCDattt/FintechEventProcessingSystem/server/internal/handler.(*AccountHandler).CreateAccount-fm (3 handlers)
+[GIN-debug] GET    /metrics                  --> main.main.WrapH.func3 (3 handlers)
+2025/08/24 17:29:48 http server listening on: 8080
+2025/08/24 17:29:48 gRPC server listening on: 50051
+2025/08/24 17:29:56 Consuming transaction
+2025/08/24 17:30:01 Received transaction: {4 deposit processing 1000 Processing 1 <nil> 2025-08-24 10:30:01.331188 +0000 UTC}
+Deposit status: TRANSACTION_STATUS_PROCESSING
+Withdraw status: TRANSACTION_STATUS_PROCESSING
+Payment status: TRANSACTION_STATUS_PROCESSING
+2025/08/24 17:30:06 Processed transaction: {4 deposit success 1000 Processed 1 <nil> 2025-08-24 10:30:01.331188 +0000 UTC}
+2025/08/24 17:30:06 Received transaction: {5 withdraw processing 500 Processing 1 <nil> 2025-08-24 10:30:01.347725 +0000 UTC}
+2025/08/24 17:30:11 Processed transaction: {5 withdraw success 500 Processed 1 <nil> 2025-08-24 10:30:01.347725 +0000 UTC}
+2025/08/24 17:30:11 Received transaction: {6 payment processing 500 Processing 1 0xc00011c598 2025-08-24 10:30:01.351052 +0000 UTC}
+2025/08/24 17:30:16 Processed transaction: {6 payment success 500 Processed 1 0xc00011c6f0 2025-08-24 10:30:01.351052 +0000 UTC}
+[GIN] 2025/08/24 - 17:30:27 | 200 |     9.08934ms |       127.0.0.1 | GET      "/metrics"
+Deposit status: TRANSACTION_STATUS_PROCESSING
+2025/08/24 17:30:46 Received transaction: {7 deposit processing 1000 Processing 1 <nil> 2025-08-24 10:30:46.183036 +0000 UTC}
+Withdraw status: TRANSACTION_STATUS_PROCESSING
+Payment status: TRANSACTION_STATUS_PROCESSING
+2025/08/24 17:30:51 Processed transaction: {7 deposit success 1000 Processed 1 <nil> 2025-08-24 10:30:46.183036 +0000 UTC}
+2025/08/24 17:30:51 Received transaction: {8 withdraw processing 500 Processing 1 <nil> 2025-08-24 10:30:46.186688 +0000 UTC}
+2025/08/24 17:30:56 Processed transaction: {8 withdraw success 500 Processed 1 <nil> 2025-08-24 10:30:46.186688 +0000 UTC}
+2025/08/24 17:30:56 Received transaction: {9 payment processing 500 Processing 1 0xc00011c8d8 2025-08-24 10:30:46.189386 +0000 UTC}
+[GIN] 2025/08/24 - 17:30:58 | 200 |     7.42026ms |       127.0.0.1 | POST     "/account"
+2025/08/24 17:31:01 Processed transaction: {9 payment success 500 Processed 1 0xc000011a20 2025-08-24 10:30:46.189386 +0000 UTC}
+[GIN] 2025/08/24 - 17:31:03 | 200 |    4.087454ms |       127.0.0.1 | POST     "/account"
+[GIN] 2025/08/24 - 17:31:27 | 200 |    3.978781ms |       127.0.0.1 | GET      "/metrics"
+[GIN] 2025/08/24 - 17:32:27 | 200 |    4.464314ms |       127.0.0.1 | GET      "/metrics"
+[GIN] 2025/08/24 - 17:33:27 | 200 |    2.582061ms |       127.0.0.1 | GET      "/metrics"
+[GIN] 2025/08/24 - 17:34:27 | 200 |    4.420029ms |       127.0.0.1 | GET      "/metrics"
+[GIN] 2025/08/24 - 17:35:27 | 200 |    2.902096ms |       127.0.0.1 | GET      "/metrics"
+[GIN] 2025/08/24 - 17:36:27 | 200 |    2.259875ms |       127.0.0.1 | GET      "/metrics"
+[GIN] 2025/08/24 - 17:37:27 | 200 |    2.992966ms |       127.0.0.1 | GET      "/metrics"
+[GIN] 2025/08/24 - 17:38:27 | 200 |    5.906388ms |       127.0.0.1 | GET      "/metrics"
+[GIN] 2025/08/24 - 17:39:27 | 200 |    2.500657ms |       127.0.0.1 | GET      "/metrics"
+[GIN] 2025/08/24 - 17:40:27 | 200 |    7.812277ms |       127.0.0.1 | GET      "/metrics"
+[GIN] 2025/08/24 - 17:41:27 | 200 |    2.452234ms |       127.0.0.1 | GET      "/metrics"
+[GIN] 2025/08/24 - 17:42:27 | 200 |    1.919255ms |       127.0.0.1 | GET      "/metrics"

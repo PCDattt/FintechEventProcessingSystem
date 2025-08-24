@@ -21,10 +21,13 @@ import (
 	"github.com/PCDattt/FintechEventProcessingSystem/shared/proto"
 	"github.com/jackc/pgx/v5/pgxpool"
     "github.com/gin-gonic/gin"
+    "github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/PCDattt/FintechEventProcessingSystem/server/internal/prometheus"
 )
 
 func main() {
 	cfg := config.LoadConfig()
+	prometheus.Init()
 	
 	pool, err := pgxpool.New(context.Background(), cfg.DBURL)
 	if err != nil {
@@ -44,6 +47,7 @@ func main() {
 
 	r := gin.Default()
 	r.POST("/account", accountHandler.CreateAccount)
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	httpServer := &http.Server{
 		Addr:    ":8080",
